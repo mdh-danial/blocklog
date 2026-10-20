@@ -1,0 +1,20 @@
+# Render Blueprint: deploys the web app on the free plan.
+# The database lives on Neon (Render's free Postgres is deleted after 30 days).
+# After the first deploy, set DATABASE_URL in the Render dashboard to your Neon URL.
+services:
+  - type: web
+    name: blocklog
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false

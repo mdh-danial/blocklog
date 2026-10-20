@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="top">
+  <div>
+    <h1>BlockLog</h1>
+    <p id="block-status" class="muted">No active block</p>
+  </div>
+  <form method="post" action="{{ url_for('auth.logout') }}">
+    <button class="btn ghost small" type="submit">Log out</button>
+  </form>
+</header>
+
+<p id="offline-banner" class="banner" hidden>Offline. Sets are saved on your phone and will sync later.</p>
+
+<!-- 1. Pick exercise -->
+<section class="card">
+  <div class="row">
+    <select id="exercise" aria-label="Exercise"></select>
+    <button id="add-exercise-toggle" class="btn ghost small" type="button">+ New</button>
+  </div>
+  <form id="add-exercise" class="row" hidden>
+    <input id="new-name" placeholder="e.g. Back squat" required>
+    <select id="new-size" aria-label="Lift size">
+      <option value="big">Big lift (+5kg)</option>
+      <option value="small">Small lift (+2.5kg)</option>
+    </select>
+    <button class="btn small" type="submit">Add</button>
+  </form>
+</section>
+
+<!-- 2. Instant recall: the core feature -->
+<section class="card recall">
+  <div>
+    <h2>Last time</h2>
+    <ul id="last-session" class="sets"><li class="muted">Nothing logged yet</li></ul>
+  </div>
+  <div class="split">
+    <div><h2>Best</h2><p id="best" class="big-num">–</p></div>
+    <div><h2>This week's target</h2><p id="target" class="big-num">–</p></div>
+  </div>
+</section>
+
+<!-- 3. Fast logging -->
+<form id="log-form" class="card stack">
+  <div class="steppers">
+    <div class="stepper">
+      <span>kg</span>
+      <button type="button" data-step="weight:-2.5">−</button>
+      <input id="weight" type="number" inputmode="decimal" step="0.5" min="0" value="20">
+      <button type="button" data-step="weight:2.5">+</button>
+    </div>
+    <div class="stepper">
+      <span>reps</span>
+      <button type="button" data-step="reps:-1">−</button>
+      <input id="reps" type="number" inputmode="numeric" min="1" value="8">
+      <button type="button" data-step="reps:1">+</button>
+    </div>
+    <div class="stepper">
+      <span>RPE</span>
+      <button type="button" data-step="rpe:-0.5">−</button>
+      <input id="rpe" type="number" inputmode="decimal" step="0.5" min="1" max="10" placeholder="–">
+      <button type="button" data-step="rpe:0.5">+</button>
+    </div>
+  </div>
+  <button class="btn primary big" type="submit">Log set</button>
+  <p id="log-msg" class="muted center" aria-live="polite"></p>
+</form>
+
+<!-- 4. Recovery week -->
+<details class="card">
+  <summary>Recovery week: log cardio / stretching</summary>
+  <form id="recovery-form" class="row">
+    <select id="rec-kind" aria-label="Type">
+      <option value="cardio">Cardio</option>
+      <option value="stretch">Stretching</option>
+    </select>
+    <input id="rec-min" type="number" inputmode="numeric" min="1" value="30" aria-label="Minutes">
+    <span class="muted">min</span>
+    <button class="btn small" type="submit">Log</button>
+  </form>
+</details>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

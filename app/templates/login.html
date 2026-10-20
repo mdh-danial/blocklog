@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in · BlockLog{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>BlockLog</h1>
+  <p class="muted">Never forget your last set again.</p>
+  <form method="post" class="card stack">
+    <label>Email <input name="email" type="email" autocomplete="email" required></label>
+    <label>Password <input name="password" type="password" autocomplete="current-password" required></label>
+    <button class="btn primary" type="submit">Log in</button>
+  </form>
+  <p class="muted">New here? <a href="{{ url_for('auth.register') }}">Create an account</a></p>
+</section>
+{% endblock %}
