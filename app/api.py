@@ -9,6 +9,8 @@ from . import db
 from .models import Block, BlockTarget, Exercise, ExerciseProgress, RecoverySession, SetLog
 from .progression import next_miss_count, progression, target_was_hit
 
+from sqlalchemy import func
+
 bp = Blueprint("api", __name__)
 
 # Sets within this window of your most recent set count as "last session".
@@ -69,13 +71,17 @@ def list_exercises():
 @login_required
 def create_exercise():
     data = _json()
-    name = str(data.get("name", "")).strip()
+    name = " ".join(str(data.get("name", "")).split())
+    check_name = name.lower()
     size = data.get("size", "small")
     if not name:
         return _bad("name is required")
     if size not in ("big", "small"):
         return _bad("size must be 'big' or 'small'")
-    if Exercise.query.filter_by(user_id=current_user.id, name=name).first():
+    if Exercise.query.filter(
+        Exercise.user_id == current_user.id,
+        func.lower(Exercise.name) == check_name
+        ).first():
         return _bad("you already have an exercise with that name")
     ex = Exercise(user_id=current_user.id, name=name, size=size)
     db.session.add(ex)

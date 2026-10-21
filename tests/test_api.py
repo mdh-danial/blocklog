@@ -129,3 +129,15 @@ def test_pwa_files_served(client):
     assert client.get("/sw.js").status_code == 200
     assert client.get("/manifest.webmanifest").status_code == 200
     assert client.get("/healthz").get_json() == {"status": "ok"}
+
+def test_duplicate_exercise_name_ignores_case(user_client):
+    res = user_client.post("/api/exercises", json={"name": "Back squat", "size": "big"})
+    assert res.status_code == 201
+    res = user_client.post("/api/exercises", json={"name": "back squat", "size": "big"})
+    assert res.status_code == 400
+
+def test_extra_spaces_between_exercise_name(user_client):
+    res = user_client.post("/api/exercises", json={"name": "Back squat", "size": "big"})
+    assert res.status_code == 201
+    res = user_client.post("/api/exercises", json={"name": "back     squat", "size": "big"})
+    assert res.status_code == 400
